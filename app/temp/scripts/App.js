@@ -42,7 +42,7 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -64,9 +64,9 @@
 	new _RevealOnScroll2.default((0, _jquery2.default)(".feature-item"), "85%");
 	new _RevealOnScroll2.default((0, _jquery2.default)(".testimonial"), "60%");
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 
@@ -113,9 +113,9 @@
 
 	exports.default = MobileMenu;
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 	 * jQuery JavaScript Library v2.2.4
@@ -9933,9 +9933,9 @@
 	}));
 
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -9994,15 +9994,15 @@
 
 	exports.default = RevealOnScroll;
 
-/***/ },
+/***/ }),
 /* 4 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/*!
-	Waypoints - 4.0.0
-	Copyright © 2011-2015 Caleb Troughton
+	Waypoints - 4.0.1
+	Copyright © 2011-2016 Caleb Troughton
 	Licensed under the MIT license.
-	https://github.com/imakewebthings/waypoints/blog/master/licenses.txt
+	https://github.com/imakewebthings/waypoints/blob/master/licenses.txt
 	*/
 	(function() {
 	  'use strict'
@@ -10121,7 +10121,11 @@
 	  /* Public */
 	  /* http://imakewebthings.com/waypoints/api/enable-all */
 	  Waypoint.enableAll = function() {
-	    Waypoint.invokeAll('enable')
+	    Waypoint.Context.refreshAll()
+	    for (var waypointKey in allWaypoints) {
+	      allWaypoints[waypointKey].enabled = true
+	    }
+	    return this
 	  }
 
 	  /* Public */
@@ -10196,6 +10200,10 @@
 	    element.waypointContextKey = this.key
 	    contexts[element.waypointContextKey] = this
 	    keyCounter += 1
+	    if (!Waypoint.windowContext) {
+	      Waypoint.windowContext = true
+	      Waypoint.windowContext = new Context(window)
+	    }
 
 	    this.createThrottledScrollHandler()
 	    this.createThrottledResizeHandler()
@@ -10212,7 +10220,8 @@
 	  Context.prototype.checkEmpty = function() {
 	    var horizontalEmpty = this.Adapter.isEmptyObject(this.waypoints.horizontal)
 	    var verticalEmpty = this.Adapter.isEmptyObject(this.waypoints.vertical)
-	    if (horizontalEmpty && verticalEmpty) {
+	    var isWindow = this.element == this.element.window
+	    if (horizontalEmpty && verticalEmpty && !isWindow) {
 	      this.adapter.off('.waypoints')
 	      delete contexts[this.key]
 	    }
@@ -10281,6 +10290,9 @@
 
 	      for (var waypointKey in this.waypoints[axisKey]) {
 	        var waypoint = this.waypoints[axisKey][waypointKey]
+	        if (waypoint.triggerPoint === null) {
+	          continue
+	        }
 	        var wasBeforeTriggerPoint = axis.oldScroll < waypoint.triggerPoint
 	        var nowAfterTriggerPoint = axis.newScroll >= waypoint.triggerPoint
 	        var crossedForward = wasBeforeTriggerPoint && nowAfterTriggerPoint
@@ -10400,7 +10412,7 @@
 	        }
 
 	        contextModifier = axis.contextScroll - axis.contextOffset
-	        waypoint.triggerPoint = elementOffset + contextModifier - adjustment
+	        waypoint.triggerPoint = Math.floor(elementOffset + contextModifier - adjustment)
 	        wasBeforeScroll = oldTriggerPoint < axis.oldScroll
 	        nowAfterScroll = waypoint.triggerPoint >= axis.oldScroll
 	        triggeredBackward = wasBeforeScroll && nowAfterScroll
@@ -10454,6 +10466,7 @@
 	    }
 	    Context.refreshAll()
 	  }
+
 
 	  Waypoint.requestAnimationFrame = function(callback) {
 	    var requestFn = window.requestAnimationFrame ||
@@ -10744,5 +10757,5 @@
 	}())
 	;
 
-/***/ }
+/***/ })
 /******/ ]);
