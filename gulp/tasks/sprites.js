@@ -23,7 +23,7 @@ var config = {
       render: {
         css: {
           template: './gulp/templates/sprite.css'
-        } 
+        }
       }
     }
   }
